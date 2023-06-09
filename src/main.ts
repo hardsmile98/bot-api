@@ -9,6 +9,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const URL_CLIENT = configService.get<string>('URL_CLIENT');
+  const URL_BOT = configService.get<string>('URL_BOT');
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,7 +18,7 @@ async function bootstrap() {
   );
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: [URL_CLIENT],
+    origin: [URL_CLIENT, URL_BOT],
     methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
     credentials: true,
   });

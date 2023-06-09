@@ -23,13 +23,13 @@ enum Plan {
 model User {
   id               Int            @id @default(autoincrement())
   chatId           String
+  userId           String
   firstName        String
   lastName         String
   userName         String
   isPaid           Boolean        @default(false)
   plan             Plan           @default(none)
   requestsCount    Int            @default(0)
-  subscriptionDate DateTime?
   createdAt        DateTime       @default(now())
   notFoundFiles    NotFoundFile[]
 }
