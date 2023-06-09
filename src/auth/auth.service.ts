@@ -14,24 +14,24 @@ export class AuthService {
   ) {}
 
   async login(dto: LoginDto) {
-    const user = await this.prisma.user.findUnique({
+    const admin = await this.prisma.admin.findFirst({
       where: {
-        email: dto.email,
+        login: dto.login,
       },
     });
 
-    if (!user) throw new BadRequestException('Credentials incorrect');
+    if (!admin) throw new BadRequestException('Credentials incorrect');
 
-    const pwMatches = await argon.verify(user.password, dto.password);
+    const pwMatches = await argon.verify(admin.password, dto.password);
 
     if (!pwMatches) throw new BadRequestException('Password incorrect');
 
-    return this.getToken(user.id);
+    return this.getToken(admin.id);
   }
 
   async register(dto: RegisterDto) {
-    const isExist = await this.prisma.user.findFirst({
-      where: { email: dto.email },
+    const isExist = await this.prisma.admin.findFirst({
+      where: { login: dto.login },
     });
 
     if (isExist) {
@@ -40,16 +40,14 @@ export class AuthService {
 
     const hash = await argon.hash(dto.password);
 
-    const user = await this.prisma.user.create({
+    const admin = await this.prisma.admin.create({
       data: {
-        email: dto.email,
+        login: dto.login,
         password: hash,
-        firstName: dto.firstName,
-        lastName: dto.lastName,
       },
     });
 
-    return this.getToken(user.id);
+    return this.getToken(admin.id);
   }
 
   async getToken(userId: number): Promise<{ token: string }> {
@@ -60,7 +58,6 @@ export class AuthService {
     const secret = this.config.get('SECRET');
 
     const token = await this.jwtService.signAsync(payload, {
-      expiresIn: '7d',
       secret: secret,
     });
 
