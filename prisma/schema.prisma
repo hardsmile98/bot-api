@@ -7,9 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Admin {
+  id        Int      @id @default(autoincrement())
+  login     String
+  password  String
+  createdAt DateTime @default(now())
+}
+
+enum Plan {
+  none
+  free
+  pro
+}
+
 model User {
-  id           Int      @id @default(autoincrement())
-  monitorId    Int
-  responseTime Int
-  createdAt    DateTime @default(now())
+  id               Int            @id @default(autoincrement())
+  chatId           String
+  firstName        String
+  lastName         String
+  userName         String
+  isPaid           Boolean        @default(false)
+  plan             Plan           @default(none)
+  requestsCount    Int            @default(0)
+  subscriptionDate DateTime?
+  createdAt        DateTime       @default(now())
+  notFoundFiles    NotFoundFile[]
+}
+
+model File {
+  id       Int    @id @default(autoincrement())
+  url      String
+  download String
+  price    String
+}
+
+model NotFoundFile {
+  id     Int    @id @default(autoincrement())
+  url    String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int
 }
