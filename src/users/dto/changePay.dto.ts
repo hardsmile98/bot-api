@@ -1,3 +1,4 @@
+import { Plan } from '@prisma/client';
 import { IsNotEmpty } from 'class-validator';
 
 export class ChangePayDto {
@@ -5,5 +6,5 @@ export class ChangePayDto {
   userId: string;
 
   @IsNotEmpty()
-  isPaid: boolean;
+  plan: Plan;
 }

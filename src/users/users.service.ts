@@ -21,8 +21,10 @@ export class UsersService {
       },
     });
 
+    const isPaid = user.plan === 'pro' || ('free' && user.requestsCount < 3);
+
     return {
-      isPaid: user.isPaid,
+      isPaid,
     };
   }
 
@@ -44,7 +46,7 @@ export class UsersService {
   }
 
   async changePay(dto: ChangePayDto) {
-    const { userId, isPaid } = dto;
+    const { userId, plan } = dto;
 
     const user = await this.prisma.user.findFirst({
       where: {
@@ -54,8 +56,7 @@ export class UsersService {
 
     return await this.prisma.user.update({
       data: {
-        plan: isPaid ? 'pro' : 'none',
-        isPaid: isPaid ? true : false,
+        plan,
       },
       where: {
         id: user.id,
