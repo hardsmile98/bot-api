@@ -22,5 +22,6 @@ jobs:
           git status
           npm i
           npm run build
+          cp .env /dist/
           pm2 restart main
           pm2 restart app
