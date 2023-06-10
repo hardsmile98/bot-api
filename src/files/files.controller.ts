@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { AddFileDto } from './dto';
 import { ServiceName } from '@prisma/client';
@@ -19,21 +19,21 @@ export class FilesController {
   }
 
   @Delete('/')
-  deleteFile(@Param('id') id: string) {
+  deleteFile(@Query('id') id: string) {
     return this.filesService.deleteFile(id);
   }
 
   @Get('/file')
   geFile(
-    @Param('userId') userId: string,
-    @Param('url') url: string,
-    @Param('serviceName') serviceName: ServiceName,
+    @Query('userId') userId: string,
+    @Query('url') url: string,
+    @Query('serviceName') serviceName: ServiceName,
   ) {
     return this.filesService.getFile({ userId, url, serviceName });
   }
 
   @Get('/')
-  sendFile(@Param('id') id: string) {
+  sendFile(@Query('id') id: string) {
     return this.filesService.sendFile(id);
   }
 
