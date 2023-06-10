@@ -7,7 +7,13 @@ export class FilesService {
   constructor(private prisma: PrismaService) {}
 
   async getFiles() {
-    return await this.prisma.file.findMany();
+    return await this.prisma.file.findMany({
+      orderBy: [
+        {
+          id: 'asc',
+        },
+      ],
+    });
   }
 
   async addFile(dto: AddFileDto) {
@@ -65,7 +71,33 @@ export class FilesService {
   async sendFile(id: string) {
     const idFormatted = Number(id);
 
+    if (!id) {
+      throw new BadRequestException('Id is empty');
+    }
+
     return await this.prisma.notFoundFile.delete({
+      where: { id: idFormatted },
+    });
+  }
+
+  async getNodFoundFiles() {
+    return await this.prisma.notFoundFile.findMany({
+      orderBy: [
+        {
+          id: 'asc',
+        },
+      ],
+    });
+  }
+
+  async deleteFile(id: string) {
+    const idFormatted = Number(id);
+
+    if (!id) {
+      throw new BadRequestException('Id is empty');
+    }
+
+    return await this.prisma.file.delete({
       where: { id: idFormatted },
     });
   }

@@ -1,20 +1,26 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { AddFileDto } from './dto';
 import { ServiceName } from '@prisma/client';
 
+// @UseGuards(JwtGuard)
 @Controller('files')
 export class FilesController {
   constructor(private filesService: FilesService) {}
 
   @Get('/')
-  geFiles() {
+  getFiles() {
     return this.filesService.getFiles();
   }
 
   @Post('/')
   addFile(@Body() dto: AddFileDto) {
     return this.filesService.addFile(dto);
+  }
+
+  @Delete('/')
+  deleteFile(@Param('id') id: string) {
+    return this.filesService.deleteFile(id);
   }
 
   @Get('/file')
@@ -29,5 +35,10 @@ export class FilesController {
   @Get('/')
   sendFile(@Param('id') id: string) {
     return this.filesService.sendFile(id);
+  }
+
+  @Get('/notFound')
+  getNodFoundFiles() {
+    return this.filesService.getNodFoundFiles();
   }
 }

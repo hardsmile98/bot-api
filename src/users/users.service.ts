@@ -7,7 +7,13 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async getUsers() {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      orderBy: [
+        {
+          id: 'asc',
+        },
+      ],
+    });
   }
 
   async addUser(dto: AddUserDto) {
