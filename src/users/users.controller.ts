@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddUserDto, ChangePayDto } from './dto';
 import { JwtGuard } from 'src/auth/guard';
 
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -19,12 +19,12 @@ export class UsersController {
   }
 
   @Get('/checkPaid')
-  checkPaid(@Param('userId') userId: string) {
+  checkPaid(@Query('userId') userId: string) {
     return this.usersService.checkPaid(userId);
   }
 
   @Get('/getGift')
-  getGift(@Param('userId') userId: string) {
+  getGift(@Query('userId') userId: string) {
     return this.usersService.getGift(userId);
   }
 

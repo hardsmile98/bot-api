@@ -17,6 +17,16 @@ export class UsersService {
   }
 
   async addUser(dto: AddUserDto) {
+    const isExist = await this.prisma.user.findFirst({
+      where: {
+        userId: dto.userId,
+      },
+    });
+
+    if (isExist) {
+      return {};
+    }
+
     return await this.prisma.user.create({ data: dto });
   }
 

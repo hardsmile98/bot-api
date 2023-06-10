@@ -9,6 +9,9 @@ export class AddFileDto {
   downloadUrl: string;
 
   @IsNotEmpty()
+  title: string;
+
+  @IsNotEmpty()
   price: string;
 
   @IsNotEmpty()

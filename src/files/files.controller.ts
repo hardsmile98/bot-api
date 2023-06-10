@@ -1,9 +1,18 @@
-import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { FilesService } from './files.service';
 import { AddFileDto } from './dto';
 import { ServiceName } from '@prisma/client';
+import { JwtGuard } from 'src/auth/guard';
 
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
 @Controller('files')
 export class FilesController {
   constructor(private filesService: FilesService) {}
