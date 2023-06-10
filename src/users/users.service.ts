@@ -51,6 +51,10 @@ export class UsersService {
       },
     });
 
+    if (user.plan !== 'none') {
+      return {};
+    }
+
     return await this.prisma.user.update({
       data: {
         plan: 'free',
