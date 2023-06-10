@@ -24,23 +24,28 @@ export class UsersService {
     });
 
     if (isExist) {
-      return {};
+      return {
+        isNewUser: false,
+      };
     }
 
-    return await this.prisma.user.create({ data: dto });
+    await this.prisma.user.create({ data: dto });
+
+    return {
+      isNewUser: true,
+    };
   }
 
-  async checkPaid(userId: string) {
+  async checkPlan(userId: string) {
     const user = await this.prisma.user.findFirst({
       where: {
         userId,
       },
     });
 
-    const isPaid = user.plan === 'pro' || ('free' && user.requestsCount < 3);
-
     return {
-      isPaid,
+      plan: user.plan,
+      requestsCount: user.requestsCount,
     };
   }
 
