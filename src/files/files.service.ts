@@ -23,6 +23,10 @@ export class FilesService {
   async getFile(dto: GetFileDto) {
     const { userId, url, serviceName } = dto;
 
+    if (!userId || !url || !serviceName) {
+      throw new BadRequestException('userId or url or serviceName is empty');
+    }
+
     const user = await this.prisma.user.findFirst({ where: { userId } });
 
     // Нет тарифа

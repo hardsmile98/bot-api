@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddUserDto, ChangePayDto } from './dto';
 
@@ -37,6 +37,10 @@ export class UsersService {
   }
 
   async checkPlan(userId: string) {
+    if (!userId) {
+      throw new BadRequestException('userId is empty');
+    }
+
     const user = await this.prisma.user.findFirst({
       where: {
         userId,
@@ -50,6 +54,10 @@ export class UsersService {
   }
 
   async getGift(userId: string) {
+    if (!userId) {
+      throw new BadRequestException('userId is empty');
+    }
+
     const user = await this.prisma.user.findFirst({
       where: {
         userId,
