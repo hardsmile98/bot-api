@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreatePaymentDto } from './dto';
+import { CreatePaymentDto, SavePaymentDto } from './dto';
 import * as Yookassa from 'yookassa';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -13,7 +13,7 @@ export class PaymentsService {
   constructor(private prisma: PrismaService) {}
 
   options = {
-    amount: '3500.00',
+    amount: '1.00',
     currency: 'RUB',
     paymentType: 'bank_card',
     backUrl: process.env['BACK_URL'],
@@ -41,25 +41,30 @@ export class PaymentsService {
       },
     });
 
-    console.log(payment);
+    if (!payment) {
+      throw new BadRequestException('Payment is not found');
+    }
 
-    return {};
+    const order = await yooKassa.getPayment(payment.uuid);
+
+    const isPaid = order.paid;
+
+    if (isPaid) {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          plan: 'pro',
+        },
+      });
+    }
+
+    return { isPaid };
   }
 
   async createPayment(dto: CreatePaymentDto) {
     const { currency, amount, paymentType, backUrl } = this.options;
 
-    const { userId, messageId } = dto;
-
-    const user = await this.prisma.user.findFirst({
-      where: {
-        userId,
-      },
-    });
-
-    if (!user) {
-      throw new BadRequestException('User is not found');
-    }
+    const { userId } = dto;
 
     try {
       const payment = await yooKassa.createPayment({
@@ -77,19 +82,29 @@ export class PaymentsService {
         description: `Оплата подписки пользователем: ${userId}`,
       });
 
-      if (payment.id) {
-        await this.prisma.payments.create({
-          data: {
-            uuid: payment.id,
-            messageId,
-            userId: user.id,
-          },
-        });
-      }
-
       return payment;
     } catch (e) {
       throw new BadRequestException('Error in create payment');
     }
+  }
+
+  async savePayment(dto: SavePaymentDto) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        userId: dto.userId,
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('User is not found');
+    }
+
+    await this.prisma.payments.create({
+      data: {
+        uuid: dto.uuid,
+        messageId: dto.messageId,
+        userId: user.id,
+      },
+    });
   }
 }
