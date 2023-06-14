@@ -7,8 +7,11 @@ export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 
   @Get('/')
-  checkPayment(@Query('userId') userId: string) {
-    return this.paymentsService.checkPayment(userId);
+  checkPayment(
+    @Query('userId') userId: string,
+    @Query('messageId') messageId: string,
+  ) {
+    return this.paymentsService.checkPayment(userId, messageId);
   }
 
   @Post('/')
