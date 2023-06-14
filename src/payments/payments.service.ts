@@ -16,7 +16,7 @@ export class PaymentsService {
     amount: '3500.00',
     currency: 'RUB',
     paymentType: 'bank_card',
-    backUrl: 'https://www.merchant-website.com/return_url',
+    backUrl: process.env['BACK_URL'],
   };
 
   async checkPayment(userId: string, messageId: string) {
