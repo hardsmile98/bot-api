@@ -47,6 +47,10 @@ export class UsersService {
       },
     });
 
+    if (!user) {
+      throw new BadRequestException('user is not found');
+    }
+
     return {
       plan: user.plan,
       requestsCount: user.requestsCount,
