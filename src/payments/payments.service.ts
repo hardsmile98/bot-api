@@ -47,7 +47,8 @@ export class PaymentsService {
 
     const order = await yooKassa.getPayment(payment.uuid);
 
-    const isPaid = order.paid;
+    const isPaid = order?.paid;
+    const confirmationUrl = order?.confirmation?.confirmation_url;
 
     if (isPaid) {
       await this.prisma.user.update({
@@ -58,7 +59,10 @@ export class PaymentsService {
       });
     }
 
-    return { isPaid };
+    return {
+      isPaid,
+      confirmationUrl,
+    };
   }
 
   async createPayment(dto: CreatePaymentDto) {
