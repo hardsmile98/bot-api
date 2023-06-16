@@ -17,15 +17,16 @@ export class UsersService {
   }
 
   async addUser(dto: AddUserDto) {
-    const isExist = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findFirst({
       where: {
         userId: dto.userId,
       },
     });
 
-    if (isExist) {
+    if (user) {
       return {
         isNewUser: false,
+        isPaid: user.plan === 'pro',
       };
     }
 
@@ -33,10 +34,11 @@ export class UsersService {
 
     return {
       isNewUser: true,
+      isPaid: false,
     };
   }
 
-  async checkPlan(userId: string) {
+  async getProfile(userId: string) {
     if (!userId) {
       throw new BadRequestException('userId is empty');
     }
@@ -51,10 +53,7 @@ export class UsersService {
       throw new BadRequestException('user is not found');
     }
 
-    return {
-      plan: user.plan,
-      requestsCount: user.requestsCount,
-    };
+    return user;
   }
 
   async getGift(userId: string) {

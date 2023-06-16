@@ -63,6 +63,7 @@ export class FilesService {
     await this.prisma.user.update({
       data: {
         requestsCount: user.requestsCount + 1,
+        savedMoney: user.savedMoney + file.price,
       },
       where: {
         id: user.id,

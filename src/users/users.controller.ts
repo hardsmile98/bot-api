@@ -18,9 +18,9 @@ export class UsersController {
     return this.usersService.addUser(dto);
   }
 
-  @Get('/checkPlan')
-  checkPlan(@Query('userId') userId: string) {
-    return this.usersService.checkPlan(userId);
+  @Get('/profile')
+  getProfile(@Query('userId') userId: string) {
+    return this.usersService.getProfile(userId);
   }
 
   @Get('/getGift')

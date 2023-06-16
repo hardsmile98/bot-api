@@ -55,6 +55,7 @@ export class PaymentsService {
         where: { id: user.id },
         data: {
           plan: 'pro',
+          planDate: new Date(),
         },
       });
     }

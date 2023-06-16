@@ -28,6 +28,8 @@ model User {
   lastName      String
   userName      String
   plan          Plan           @default(none)
+  planDate      DateTime?
+  savedMoney    Int            @default(0)
   requestsCount Int            @default(0)
   createdAt     DateTime       @default(now())
   notFoundFiles NotFoundFile[]
@@ -49,7 +51,7 @@ model File {
   title       String?
   downloadUrl String
   serviceName ServiceName
-  price       String
+  price       Int
 }
 
 model NotFoundFile {

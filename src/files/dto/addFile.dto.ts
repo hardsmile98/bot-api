@@ -12,7 +12,7 @@ export class AddFileDto {
   title: string;
 
   @IsNotEmpty()
-  price: string;
+  price: number;
 
   @IsNotEmpty()
   serviceName: ServiceName;
