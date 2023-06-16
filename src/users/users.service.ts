@@ -93,6 +93,7 @@ export class UsersService {
     return await this.prisma.user.update({
       data: {
         plan,
+        planDate: new Date(),
       },
       where: {
         id: user.id,
