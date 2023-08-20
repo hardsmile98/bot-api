@@ -95,6 +95,18 @@ export class FilesService {
     });
   }
 
+  async deleteNotFoundFile(id: string) {
+    const idFormatted = Number(id);
+
+    if (!id) {
+      throw new BadRequestException('Id is empty');
+    }
+
+    return await this.prisma.notFoundFile.delete({
+      where: { id: idFormatted },
+    });
+  }
+
   async deleteFile(id: string) {
     const idFormatted = Number(id);
 

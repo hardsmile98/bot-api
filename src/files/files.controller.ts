@@ -50,4 +50,9 @@ export class FilesController {
   getNodFoundFiles() {
     return this.filesService.getNodFoundFiles();
   }
+
+  @Delete('notFound')
+  deleteNotFoundFile(@Query('id') id: string) {
+    return this.filesService.deleteNotFoundFile(id);
+  }
 }
