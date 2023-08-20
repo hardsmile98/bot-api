@@ -30,12 +30,10 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto) {
-    const isExist = await this.prisma.admin.findFirst({
-      where: { login: dto.login },
-    });
+    const isExist = await this.prisma.admin.findFirst();
 
     if (isExist) {
-      throw new BadRequestException('Email taken');
+      throw new BadRequestException('Admin user is already created');
     }
 
     const hash = await argon.hash(dto.password);
