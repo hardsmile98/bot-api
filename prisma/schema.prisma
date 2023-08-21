@@ -67,6 +67,5 @@ model Payments {
   user      User     @relation(fields: [userId], references: [id])
   paid      Boolean  @default(false)
   userId    Int
-  messageId String
   createdAt DateTime @default(now())
 }
