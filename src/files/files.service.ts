@@ -31,12 +31,20 @@ export class FilesService {
 
     // Нет тарифа
     if (user.plan === 'none') {
-      throw new BadRequestException('User tariff is none');
+      return {
+        file: null,
+        isFound: false,
+        haveAccess: false,
+      };
     }
 
     // Если закончился пробный план
     if (user.plan === 'free' && user.requestsCount >= 3) {
-      throw new BadRequestException('End test access');
+      return {
+        file: null,
+        isFound: false,
+        haveAccess: false,
+      };
     }
 
     const file = await this.prisma.file.findFirst({
@@ -56,7 +64,11 @@ export class FilesService {
         },
       });
 
-      throw new BadRequestException('File not found');
+      return {
+        file: null,
+        isFound: false,
+        haveAccess: true,
+      };
     }
 
     // Увеличивам счетчик запросов пользователя
@@ -70,7 +82,11 @@ export class FilesService {
       },
     });
 
-    return file;
+    return {
+      file,
+      isFound: true,
+      haveAccess: true,
+    };
   }
 
   async sendFile(id: string) {
