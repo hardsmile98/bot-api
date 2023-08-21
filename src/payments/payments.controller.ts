@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { CreatePaymentDto, SavePaymentDto } from './dto';
+import { CreatePaymentDto } from './dto';
 import { JwtGuard } from 'src/auth/guard';
 
 @UseGuards(JwtGuard)
@@ -9,20 +9,12 @@ export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 
   @Get('/')
-  checkPayment(
-    @Query('userId') userId: string,
-    @Query('messageId') messageId: string,
-  ) {
-    return this.paymentsService.checkPayment(userId, messageId);
+  checkPayment(@Query('userId') userId: string) {
+    return this.paymentsService.checkPayment(userId);
   }
 
   @Post('/')
   createPayment(@Body() dto: CreatePaymentDto) {
     return this.paymentsService.createPayment(dto);
-  }
-
-  @Post('/save')
-  savePayment(@Body() dto: SavePaymentDto) {
-    return this.paymentsService.savePayment(dto);
   }
 }
