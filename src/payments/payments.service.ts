@@ -13,7 +13,7 @@ export class PaymentsService {
   constructor(private prisma: PrismaService) {}
 
   options = {
-    amount: '1.00',
+    amount: '3500.00',
     currency: 'RUB',
     paymentType: 'bank_card',
     backUrl: process.env['BACK_URL'],
