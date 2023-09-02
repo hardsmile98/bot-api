@@ -24,8 +24,8 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('Alert API')
-    .setDescription('The alert API description')
+    .setTitle('bot API')
+    .setDescription('The bot API description')
     .setVersion('1.0')
     .build();
 
