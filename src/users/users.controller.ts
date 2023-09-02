@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AddUserDto, ChangePayDto } from './dto';
+import { AddUserDto, ChangePayDto, GetUsersDto } from './dto';
 import { JwtGuard } from 'src/auth/guard';
 
 @UseGuards(JwtGuard)
@@ -9,8 +9,8 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get('/')
-  getUsers() {
-    return this.usersService.getUsers();
+  getUsers(@Query() query: GetUsersDto) {
+    return this.usersService.getUsers(query);
   }
 
   @Post('/')

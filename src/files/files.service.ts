@@ -4,16 +4,40 @@ import { AddFileDto, GetFileDto } from './dto';
 
 @Injectable()
 export class FilesService {
+  public pageSize = 20;
+
   constructor(private prisma: PrismaService) {}
 
-  async getFiles() {
-    return await this.prisma.file.findMany({
+  async getFiles({ page, limit = this.pageSize }) {
+    const pagination = page
+      ? {
+          skip: page * limit - limit,
+          take: limit,
+        }
+      : undefined;
+
+    const count = await this.prisma.file.count();
+
+    const files = await this.prisma.file.findMany({
+      ...(pagination && pagination),
       orderBy: [
         {
           id: 'asc',
         },
       ],
     });
+
+    return {
+      files,
+      pagination: {
+        count,
+        ...(pagination && {
+          page,
+          pageCount: Math.ceil(count / limit),
+          limit: limit,
+        }),
+      },
+    };
   }
 
   async addFile(dto: AddFileDto) {
@@ -101,14 +125,36 @@ export class FilesService {
     });
   }
 
-  async getNodFoundFiles() {
-    return await this.prisma.notFoundFile.findMany({
+  async getNodFoundFiles({ page, limit = this.pageSize }) {
+    const pagination = page
+      ? {
+          skip: page * limit - limit,
+          take: limit,
+        }
+      : undefined;
+
+    const count = await this.prisma.notFoundFile.count();
+
+    const files = await this.prisma.notFoundFile.findMany({
+      ...(pagination && pagination),
       orderBy: [
         {
           id: 'asc',
         },
       ],
     });
+
+    return {
+      files,
+      pagination: {
+        count,
+        ...(pagination && {
+          page,
+          pageCount: Math.ceil(count / limit),
+          limit: limit,
+        }),
+      },
+    };
   }
 
   async deleteNotFoundFile(id: string) {

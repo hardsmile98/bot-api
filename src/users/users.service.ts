@@ -4,16 +4,47 @@ import { AddUserDto, ChangePayDto } from './dto';
 
 @Injectable()
 export class UsersService {
+  public pageSize = 20;
+
   constructor(private prisma: PrismaService) {}
 
-  async getUsers() {
-    return await this.prisma.user.findMany({
+  async getUsers({ search, page, limit = this.pageSize }) {
+    const pagination = page
+      ? {
+          skip: page * limit - limit,
+          take: limit,
+        }
+      : undefined;
+
+    const count = await this.prisma.user.count();
+
+    const users = await this.prisma.user.findMany({
+      ...(pagination && pagination),
       orderBy: [
         {
           id: 'asc',
         },
       ],
+      where: {
+        userName: search
+          ? {
+              contains: search,
+            }
+          : undefined,
+      },
     });
+
+    return {
+      users,
+      pagination: {
+        count,
+        ...(pagination && {
+          page,
+          pageCount: Math.ceil(count / limit),
+          limit: limit,
+        }),
+      },
+    };
   }
 
   async addUser(dto: AddUserDto) {
@@ -93,7 +124,7 @@ export class UsersService {
     return await this.prisma.user.update({
       data: {
         plan,
-        planDate: new Date(),
+        planDate: plan === 'none' ? null : new Date(),
       },
       where: {
         id: user.id,

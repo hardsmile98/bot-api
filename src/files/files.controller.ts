@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { AddFileDto } from './dto';
+import { AddFileDto, GetFilesDto, GetNotFoundFilesDto } from './dto';
 import { ServiceName } from '@prisma/client';
 import { JwtGuard } from 'src/auth/guard';
 
@@ -18,8 +18,8 @@ export class FilesController {
   constructor(private filesService: FilesService) {}
 
   @Get('/')
-  getFiles() {
-    return this.filesService.getFiles();
+  getFiles(@Query() query: GetFilesDto) {
+    return this.filesService.getFiles(query);
   }
 
   @Post('/')
@@ -47,8 +47,8 @@ export class FilesController {
   }
 
   @Get('/notFound')
-  getNodFoundFiles() {
-    return this.filesService.getNodFoundFiles();
+  getNodFoundFiles(@Query() query: GetNotFoundFilesDto) {
+    return this.filesService.getNodFoundFiles(query);
   }
 
   @Delete('notFound')
