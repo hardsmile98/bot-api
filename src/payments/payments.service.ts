@@ -19,6 +19,42 @@ export class PaymentsService {
     backUrl: process.env['BACK_URL'],
   };
 
+  async createNewPayment({ userId }) {
+    const { currency, amount, paymentType, backUrl } = this.options;
+
+    try {
+      const payment = await yooKassa.createPayment({
+        amount: {
+          value: amount,
+          currency: currency,
+        },
+        payment_method_data: {
+          type: paymentType,
+        },
+        confirmation: {
+          type: 'redirect',
+          return_url: backUrl,
+        },
+        description: `Оплата подписки пользователем: ${userId}`,
+      });
+
+      if (!payment) {
+        throw new BadRequestException('Error in create payment');
+      }
+
+      await this.prisma.payments.create({
+        data: {
+          uuid: payment.id,
+          userId,
+        },
+      });
+
+      return payment;
+    } catch (e) {
+      throw new BadRequestException('Error in create payment');
+    }
+  }
+
   async checkPayment(userId: string) {
     if (!userId) {
       throw new BadRequestException('userId is empty');
@@ -74,8 +110,6 @@ export class PaymentsService {
   }
 
   async createPayment(dto: CreatePaymentDto) {
-    const { currency, amount, paymentType, backUrl } = this.options;
-
     const user = await this.prisma.user.findFirst({
       where: {
         userId: dto.userId,
@@ -96,42 +130,23 @@ export class PaymentsService {
     if (payment) {
       try {
         const order = await yooKassa.getPayment(payment.uuid);
+
+        if (order.status === 'canceled') {
+          await this.prisma.payments.delete({ where: { uuid: payment.uuid } });
+
+          const newPayment = this.createNewPayment({ userId: user.id });
+
+          return newPayment;
+        }
+
         return order;
       } catch (e) {
         throw new BadRequestException(`Error in get payment ${payment.uuid}`);
       }
     }
 
-    try {
-      const payment = await yooKassa.createPayment({
-        amount: {
-          value: amount,
-          currency: currency,
-        },
-        payment_method_data: {
-          type: paymentType,
-        },
-        confirmation: {
-          type: 'redirect',
-          return_url: backUrl,
-        },
-        description: `Оплата подписки пользователем: ${user.id}`,
-      });
+    const newPayment = this.createNewPayment({ userId: user.id });
 
-      if (!payment) {
-        throw new BadRequestException('Error in create payment');
-      }
-
-      await this.prisma.payments.create({
-        data: {
-          uuid: payment.id,
-          userId: user.id,
-        },
-      });
-
-      return payment;
-    } catch (e) {
-      throw new BadRequestException('Error in create payment');
-    }
+    return newPayment;
   }
 }
